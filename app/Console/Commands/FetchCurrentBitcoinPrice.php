@@ -3,13 +3,10 @@
 namespace App\Console\Commands;
 
 use App\DTO\BitcoinDto;
-use App\Repository\PriceHistoryRepository;
 use App\Repository\PriceHistoryRepositoryInterface;
 use App\Service\Api\BitcoinClientInterface;
 use App\Service\Api\Parser\BitcoinParserInterface;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Psr\Log\LoggerInterface;
 
 class FetchCurrentBitcoinPrice extends Command
 {
@@ -31,22 +28,14 @@ class FetchCurrentBitcoinPrice extends Command
      * Execute the console command.
      */
     public function handle(
-        LoggerInterface $logger,
         BitcoinClientInterface $client,
         BitcoinParserInterface $parser,
         PriceHistoryRepositoryInterface $repository
     ) {
         $result = $client->getTickers();
 
-        if (!$result->successful()) {
-            $logger->error('API call was not successful');
-            return;
-        }
-
-        $dtos = $parser->parse($result->json());
+        $dtos = $parser->parse($result);
         $this->save($dtos, $repository);
-
-        $logger->info('Info from cron at time: ' . (new Carbon())->format('Y-m-d H:i:s'));
     }
 
     private function save(array $dtos, PriceHistoryRepositoryInterface $repository): void

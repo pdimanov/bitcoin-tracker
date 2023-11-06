@@ -2,35 +2,17 @@
 
 namespace App\Service\Api;
 
-use App\Service\Api\Parser\BitcoinParserInterface;
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 class BitfinexClient implements BitcoinClientInterface
 {
     private const API_BASE_URL = 'https://api-pub.bitfinex.com';
     private const API_VERSION = 'v2';
-    private const API_TICKER_ENDPOINT = 'ticker';
     private const API_TICKERS_ENDPOINT = 'tickers';
     public const BITCOIN_DOLLAR_SYMBOL = 'tBTCUSD';
     public const BITCOIN_EURO_SYMBOL = 'tBTCEUR';
 
-    public function __construct(
-        private readonly Http $client,
-    ) {
-    }
-
-    public function getTicker(string $symbol): Response
-    {
-        return $this->client::withUrlParameters([
-            'endpoint' => self::API_BASE_URL,
-            'version'  => self::API_VERSION,
-            'page'     => self::API_TICKER_ENDPOINT,
-            'symbol'   => $symbol
-        ])->get('{+endpoint}/{version}/{page}/{symbol}');
-    }
-
-    public function getTickers(array $symbols = []): Response
+    public function getTickers(array $symbols = []): array
     {
         if (empty($symbols)) {
             $symbols = $this->getDefaultSymbols();
@@ -38,13 +20,27 @@ class BitfinexClient implements BitcoinClientInterface
 
         $symbols = implode(',', $symbols);
 
-        return $this->client::withUrlParameters([
-            'endpoint' => self::API_BASE_URL,
-            'version'  => self::API_VERSION,
-            'page'     => self::API_TICKERS_ENDPOINT
-        ])->withQueryParameters([
-            'symbols' => $symbols
-        ])->get('{+endpoint}/{version}/{page}');
+        $params = [
+            'page' => self::API_TICKERS_ENDPOINT
+        ];
+
+        $response = Http::withUrlParameters(
+            array_merge(
+                $this->getBaseUrlParameters(),
+                $params
+            )
+        )
+            ->withQueryParameters([
+                'symbols' => $symbols
+            ])
+            ->acceptJson()
+            ->get('{+baseUrl}/{version}/{page}');
+
+        if (!$response->successful()) {
+            throw new \Exception('API call was not successful');
+        }
+
+        return $response->json();
     }
 
     private function getDefaultSymbols(): array
@@ -52,6 +48,14 @@ class BitfinexClient implements BitcoinClientInterface
         return [
             self::BITCOIN_DOLLAR_SYMBOL,
             self::BITCOIN_EURO_SYMBOL
+        ];
+    }
+
+    private function getBaseUrlParameters(): array
+    {
+        return [
+            'baseUrl' => self::API_BASE_URL,
+            'version' => self::API_VERSION,
         ];
     }
 }
