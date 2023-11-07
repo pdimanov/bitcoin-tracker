@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -27,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [SubscriptionController::class, 'index'])->name('subscription.index');
+Route::post('/store', [SubscriptionController::class, 'store'])->name('subscription.store');
 
 require __DIR__.'/auth.php';

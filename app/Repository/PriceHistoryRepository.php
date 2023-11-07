@@ -10,4 +10,11 @@ class PriceHistoryRepository implements PriceHistoryRepositoryInterface
     {
         PriceHistory::create($data);
     }
+
+    public function getLatestPriceByCurrency(string $currency): PriceHistory|null
+    {
+        return PriceHistory::where('currency', $currency)
+            ->latest()
+            ->first();
+    }
 }
