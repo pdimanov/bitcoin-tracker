@@ -7,7 +7,7 @@ use App\Enum\TimeInterval;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreNotificationRequest extends FormRequest
+class StoreSubscriptionRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.

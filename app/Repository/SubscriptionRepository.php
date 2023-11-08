@@ -18,8 +18,8 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
         $subscriptionsQuery->where(function ($query) use ($bitcoinDtos) {
             foreach ($bitcoinDtos as $bitcoinDto) {
                 $query->orWhere(function ($query) use ($bitcoinDto) {
-                    $query->where('price', '<=', $bitcoinDto->price)
-                        ->where('currency', $bitcoinDto->currency);
+                    $query->where('currency', $bitcoinDto->currency)
+                    ->whereRaw('((is_increasing = 1 AND price <= ?)OR (is_increasing = 0 AND price >= ?))', [$bitcoinDto->price, $bitcoinDto->price]);
                 });
             }
         });

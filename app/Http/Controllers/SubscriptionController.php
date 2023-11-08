@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enum\Currency;
 use App\Enum\TimeInterval;
-use App\Http\Requests\StoreNotificationRequest;
+use App\Http\Requests\StoreSubscriptionRequest;
 use App\Models\Subscription;
 use App\Service\Parser\SubscriptionParserInterface;
 use Inertia\Inertia;
@@ -30,7 +30,7 @@ class SubscriptionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreNotificationRequest $request, SubscriptionParserInterface $parser)
+    public function store(StoreSubscriptionRequest $request, SubscriptionParserInterface $parser)
     {
         $data = $request->validated();
 

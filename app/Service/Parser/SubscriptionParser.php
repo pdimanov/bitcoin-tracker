@@ -22,8 +22,9 @@ class SubscriptionParser implements SubscriptionParserInterface
         if ($data['isPercentageBased']) {
             $subscription['price'] = $this->subscriptionCalculator->calculatePriceWithPercentage(
                 $data['pricePercentage'],
-                $data['currency']
+                $subscription['currency']
             );
+            $subscription['is_increasing'] = $data['pricePercentage'] >= 0;
             $subscription['expiration_date'] = $this->intervalBuilder->create($data['interval']);
         } else {
             $subscription['price'] = $data['price'];
