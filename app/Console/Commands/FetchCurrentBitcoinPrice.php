@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\DTO\BitcoinDto;
+use App\Events\NewBitcoinPricesFetched;
 use App\Repository\PriceHistoryRepositoryInterface;
 use App\Service\Api\BitcoinClientInterface;
 use App\Service\Api\Parser\BitcoinParserInterface;
@@ -35,10 +36,12 @@ class FetchCurrentBitcoinPrice extends Command
         $result = $client->getTickers();
 
         $dtos = $parser->parse($result);
-        $this->save($dtos, $repository);
+        $this->saveFetchedResult($dtos, $repository);
+
+        event(new NewBitcoinPricesFetched($dtos));
     }
 
-    private function save(array $dtos, PriceHistoryRepositoryInterface $repository): void
+    private function saveFetchedResult(array $dtos, PriceHistoryRepositoryInterface $repository): void
     {
         /** @var BitcoinDto $dto */
         foreach ($dtos as $dto) {

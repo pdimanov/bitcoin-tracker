@@ -4,14 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Subscription extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
-    protected $fillable = ['email', 'price', 'currency', 'expiration_date'];
+    protected $fillable = ['email', 'price', 'currency', 'expiration_date', 'is_notified'];
 
     protected $attributes = [
-        'expiration_date'  => null
+        'expiration_date' => null,
+        'is_notified'     => false
     ];
 }

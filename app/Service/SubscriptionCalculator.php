@@ -13,7 +13,7 @@ class SubscriptionCalculator implements SubscriptionCalculatorInterface
     ) {
     }
 
-    public function calculatePriceWithPercentage(int $percent, string $currency): int
+    public function calculatePriceWithPercentage(float $percent, string $currency): int
     {
         $latestPrice = $this->priceHistoryRepository->getLatestPriceByCurrency($currency);
 

@@ -20,7 +20,7 @@ class StoreNotificationRequest extends FormRequest
 
         if ($isPercentageBased) {
             return $this->mergeWithCommonRules([
-                'pricePercentage' => 'required|integer|numeric',
+                'pricePercentage' => 'required|numeric',
                 'interval'        => ['required', Rule::enum(TimeInterval::class)]
             ]);
         }

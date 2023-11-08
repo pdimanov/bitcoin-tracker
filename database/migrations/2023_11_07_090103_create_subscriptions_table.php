@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('currency');
             $table->integer('price')->unsigned();
+            $table->boolean('is_notified')->default(false);
             $table->timestamp('expiration_date')->nullable();
             $table->timestamps();
         });

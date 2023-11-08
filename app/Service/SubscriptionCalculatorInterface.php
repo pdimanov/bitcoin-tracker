@@ -4,5 +4,5 @@ namespace App\Service;
 
 interface SubscriptionCalculatorInterface
 {
-    public function calculatePriceWithPercentage(int $percent, string $currency): int;
+    public function calculatePriceWithPercentage(float $percent, string $currency): int;
 }
