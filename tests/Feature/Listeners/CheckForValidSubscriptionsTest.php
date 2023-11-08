@@ -7,6 +7,7 @@ use App\Enum\Currency;
 use App\Events\NewBitcoinPricesFetched;
 use App\Listeners\CheckForValidSubscriptions;
 use App\Models\Subscription;
+use App\Repository\SubscriptionRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
@@ -39,7 +40,8 @@ class CheckForValidSubscriptionsTest extends TestCase
             new BitcoinDto(80, Currency::EURO->value)
         ];
         $event = new NewBitcoinPricesFetched($eventData);
-        $listener = new CheckForValidSubscriptions();
+        $subscriptionRepository = new SubscriptionRepository();
+        $listener = new CheckForValidSubscriptions($subscriptionRepository);
 
         $listener->handle($event);
         $this->assertDatabaseHas('subscriptions', [
