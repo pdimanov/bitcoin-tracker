@@ -29,6 +29,6 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/', [SubscriptionController::class, 'index'])->name('subscription.index');
-Route::post('/store', [SubscriptionController::class, 'store'])->name('subscription.store');
+Route::post('/subscription/store', [SubscriptionController::class, 'store'])->name('subscription.store');
 
 require __DIR__.'/auth.php';

@@ -16,7 +16,7 @@ class StoreSubscriptionRequest extends FormRequest
      */
     public function rules(): array
     {
-        $isPercentageBased = $this->input('isPercentageBased');
+        $isPercentageBased = $this->input('isPercentageBased', false);
 
         if ($isPercentageBased) {
             return $this->mergeWithCommonRules([
@@ -35,7 +35,7 @@ class StoreSubscriptionRequest extends FormRequest
         return array_merge([
             'email'             => 'required|email',
             'currency'          => ['required', Rule::enum(Currency::class)],
-            'isPercentageBased' => 'boolean'
+            'isPercentageBased' => 'required|boolean'
         ], $rules);
     }
 }
