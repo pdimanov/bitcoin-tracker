@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('price')->unsigned();
             $table->string('currency');
             $table->timestamps();
-            $table->index(['currency', 'price', 'created_at']);
+            $table->index(['currency', 'created_at']);
         });
     }
 

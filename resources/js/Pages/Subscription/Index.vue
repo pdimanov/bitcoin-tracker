@@ -24,11 +24,11 @@
 
             <template v-if="form.isPercentageBased">
                 <TextInput
-                    v-model="form.pricePercentage"
+                    v-model="form.percentage"
                     placeholder="Price percentage based subscription"
                     class="block w-full border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm"
                 ></TextInput>
-                <InputError :message="form.errors.pricePercentage" class="mt-2"/>
+                <InputError :message="form.errors.percentage" class="mt-2"/>
             </template>
 
             <label class="flex items-center">
@@ -90,7 +90,7 @@ const form = useForm({
     price: '',
     currency: '',
     isPercentageBased: false,
-    pricePercentage: '',
+    percentage: '',
     interval: ''
 });
 </script>

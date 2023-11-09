@@ -11,32 +11,28 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
 {
     public function getValidSubscriptions(array $bitcoinDtos): Collection
     {
-        $subscriptionsQuery = Subscription::query()
-            ->where('is_notified', '=', false);
-
-        /** @var BitcoinDto $bitcoinDto */
-        $subscriptionsQuery->where(function ($query) use ($bitcoinDtos) {
-            foreach ($bitcoinDtos as $bitcoinDto) {
-                $query->orWhere(function ($query) use ($bitcoinDto) {
-                    $query->where('currency', $bitcoinDto->currency)
-                        ->where(function ($query) use ($bitcoinDto) {
-                            $query->where(function ($query) use ($bitcoinDto) {
-                                $query->where('is_increasing', 1)
-                                    ->where('price', '<=', $bitcoinDto->price);
-                            })->orWhere(function ($query) use ($bitcoinDto) {
-                                $query->where('is_increasing', 0)
-                                    ->where('price', '>=', $bitcoinDto->price);
+        return Subscription::query()
+            ->where(function ($query) {
+                $sixHoursAgo = Carbon::now()->addHours(-6);
+                $query->whereNull('last_notified')
+                    //Avoid spamming
+                    ->orWhere('last_notified', '<=', $sixHoursAgo);
+            })
+            ->where(function ($query) use ($bitcoinDtos) {
+                $query->whereNotNull('percentage')
+                    ->orWhere(function ($query) use ($bitcoinDtos) {
+                        $query->whereNull('percentage')
+                            ->where(function ($query) use ($bitcoinDtos) {
+                                /** @var BitcoinDto $bitcoinDto */
+                                foreach ($bitcoinDtos as $bitcoinDto) {
+                                    $query->orWhere(function ($query) use ($bitcoinDto) {
+                                        $query->where('currency', $bitcoinDto->currency)
+                                            ->where('price', '<=', $bitcoinDto->price);
+                                    });
+                                }
                             });
-                        });
-                });
-            }
-        });
-
-        $subscriptionsQuery->where(function ($query) {
-            $query->whereNull('expiration_date')
-                ->orWhere('expiration_date', '>=', Carbon::create());
-        });
-
-        return $subscriptionsQuery->get();
+                    });
+            })
+            ->get();
     }
 }

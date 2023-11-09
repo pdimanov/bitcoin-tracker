@@ -10,11 +10,11 @@ class Subscription extends Model
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = ['email', 'price', 'currency', 'expiration_date', 'is_notified', 'is_increasing'];
+    protected $fillable = ['email', 'price', 'currency', 'percentage', 'interval', 'last_notified'];
 
     protected $attributes = [
-        'expiration_date' => null,
-        'is_notified'     => false,
-        'is_increasing'   => true
+        'interval'      => null,
+        'percentage'    => null,
+        'last_notified' => null,
     ];
 }

@@ -17,8 +17,7 @@ class SubscriptionTargetReached extends Notification
      */
     public function __construct(
         private Subscription $subscription
-    )
-    {
+    ) {
         //
     }
 
@@ -37,9 +36,19 @@ class SubscriptionTargetReached extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-                    ->subject('Bitcoin price alert')
-                    ->line('Your bitcoin subscription for ' . $this->subscription->price . $this->subscription->currency . ' has been triggered.');
+        $mailMessage = (new MailMessage())
+            ->subject('Bitcoin price alert');
+        if ($this->subscription->price) {
+            $mailMessage->line(
+                "Bitcoin reached its price of {$this->subscription->currency} {$this->subscription->price}."
+            );
+        } else {
+            $mailMessage->line(
+                "Bitcoin's price differed by {$this->subscription->percentage}% in the last {$this->subscription->interval} hours."
+            );
+        }
+
+        return $mailMessage;
     }
 
     /**

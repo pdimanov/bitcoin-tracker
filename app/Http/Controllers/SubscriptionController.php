@@ -6,7 +6,6 @@ use App\Enum\Currency;
 use App\Enum\TimeInterval;
 use App\Http\Requests\StoreSubscriptionRequest;
 use App\Models\Subscription;
-use App\Service\Parser\SubscriptionParserInterface;
 use Inertia\Inertia;
 
 class SubscriptionController extends Controller
@@ -30,11 +29,8 @@ class SubscriptionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreSubscriptionRequest $request, SubscriptionParserInterface $parser)
+    public function store(StoreSubscriptionRequest $request)
     {
-        $data = $request->validated();
-
-        $parsedData = $parser->parse($data);
-        Subscription::create($parsedData);
+        Subscription::create($request->validated());
     }
 }

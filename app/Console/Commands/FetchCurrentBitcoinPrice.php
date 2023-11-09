@@ -4,10 +4,14 @@ namespace App\Console\Commands;
 
 use App\DTO\BitcoinDto;
 use App\Events\NewBitcoinPricesFetched;
+use App\Models\PriceHistory;
 use App\Repository\PriceHistoryRepositoryInterface;
 use App\Service\Api\BitcoinClientInterface;
 use App\Service\Api\Parser\BitcoinParserInterface;
+use App\Service\Utilities\CacheKeyCreator;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class FetchCurrentBitcoinPrice extends Command
 {
@@ -31,7 +35,7 @@ class FetchCurrentBitcoinPrice extends Command
     public function handle(
         BitcoinClientInterface $client,
         BitcoinParserInterface $parser,
-        PriceHistoryRepositoryInterface $repository
+        PriceHistoryRepositoryInterface $repository,
     ) {
         $result = $client->getTickers();
 
@@ -45,10 +49,23 @@ class FetchCurrentBitcoinPrice extends Command
     {
         /** @var BitcoinDto $dto */
         foreach ($dtos as $dto) {
-            $repository->store([
+            $priceHistory = $repository->store([
                 'price'    => $dto->price,
                 'currency' => $dto->currency
             ]);
+
+            if (!$priceHistory) {
+                Log::error('Bitcoin price could not be saved');
+                continue;
+            }
+
+            $this->saveInCache($priceHistory);
         }
+    }
+
+    private function saveInCache(PriceHistory $priceHistory): void
+    {
+        $cacheKey = CacheKeyCreator::createLatestPriceHistoryByCurrency($priceHistory->currency);
+        Cache::set($cacheKey, $priceHistory, 15);
     }
 }

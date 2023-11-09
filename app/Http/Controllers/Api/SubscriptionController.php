@@ -5,16 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSubscriptionRequest;
 use App\Models\Subscription;
-use App\Service\Parser\SubscriptionParserInterface;
 
 class SubscriptionController extends Controller
 {
-    public function store(StoreSubscriptionRequest $request, SubscriptionParserInterface $parser)
+    public function store(StoreSubscriptionRequest $request)
     {
-        $data = $request->validated();
-
-        $parsedData = $parser->parse($data);
-        Subscription::create($parsedData);
+        Subscription::create($request->validated());
 
         return response()->json([
             'message' => 'Successfully created'

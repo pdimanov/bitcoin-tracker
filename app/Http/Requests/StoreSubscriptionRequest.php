@@ -20,8 +20,8 @@ class StoreSubscriptionRequest extends FormRequest
 
         if ($isPercentageBased) {
             return $this->mergeWithCommonRules([
-                'pricePercentage' => 'required|numeric',
-                'interval'        => ['required', Rule::enum(TimeInterval::class)]
+                'percentage' => 'required|numeric',
+                'interval'   => ['required', Rule::enum(TimeInterval::class)]
             ]);
         }
 

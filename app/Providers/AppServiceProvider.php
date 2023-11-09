@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Repository\CachedPriceHistoryRepository;
 use App\Repository\PriceHistoryRepository;
 use App\Repository\PriceHistoryRepositoryInterface;
 use App\Repository\SubscriptionRepository;
@@ -10,10 +11,10 @@ use App\Service\Api\BitcoinClientInterface;
 use App\Service\Api\BitfinexClient;
 use App\Service\Api\Parser\BitcoinParserInterface;
 use App\Service\Api\Parser\BitfinexParser;
-use App\Service\Parser\SubscriptionParser;
-use App\Service\Parser\SubscriptionParserInterface;
 use App\Service\SubscriptionCalculator;
 use App\Service\SubscriptionCalculatorInterface;
+use App\Service\SubscriptionValidator;
+use App\Service\SubscriptionValidatorInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,9 +34,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(BitcoinClientInterface::class, BitfinexClient::class);
         $this->app->bind(BitcoinParserInterface::class, BitfinexParser::class);
-        $this->app->bind(PriceHistoryRepositoryInterface::class, PriceHistoryRepository::class);
+        $this->app->bind(PriceHistoryRepositoryInterface::class, CachedPriceHistoryRepository::class);
         $this->app->bind(SubscriptionCalculatorInterface::class, SubscriptionCalculator::class);
-        $this->app->bind(SubscriptionParserInterface::class, SubscriptionParser::class);
         $this->app->bind(SubscriptionRepositoryInterface::class, SubscriptionRepository::class);
+        $this->app->bind(SubscriptionValidatorInterface::class, SubscriptionValidator::class);
     }
 }

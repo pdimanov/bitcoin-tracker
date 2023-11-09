@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->string('email');
+            $table->unsignedInteger('price')->nullable();
             $table->string('currency');
-            $table->integer('price')->unsigned();
-            $table->boolean('is_notified')->default(false);
-            $table->timestamp('expiration_date')->nullable();
+            $table->unsignedFloat('percentage')->nullable();
+            $table->integer('interval')->nullable();
+            $table->timestamp('last_notified')->nullable();
             $table->timestamps();
+            $table->index(['currency', 'price', 'percentage', 'last_notified']);
         });
     }
 
