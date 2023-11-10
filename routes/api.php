@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\PriceController;
 use App\Http\Controllers\Api\SubscriptionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,4 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/subscription/store', [SubscriptionController::class, 'store']);
+Route::post('/subscription/store', [SubscriptionController::class, 'store'])->name('api.subscription.store');
+Route::get('/price/history-period', [PriceController::class, 'getHistoryPeriod'])->name('api.price.historyPeriod');

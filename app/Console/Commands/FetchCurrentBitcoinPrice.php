@@ -7,7 +7,6 @@ use App\Events\NewBitcoinPricesFetched;
 use App\Models\PriceHistory;
 use App\Repository\PriceHistoryRepositoryInterface;
 use App\Service\Api\BitcoinClientInterface;
-use App\Service\Api\Parser\BitcoinParserInterface;
 use App\Service\Utilities\CacheKeyCreator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
@@ -34,15 +33,13 @@ class FetchCurrentBitcoinPrice extends Command
      */
     public function handle(
         BitcoinClientInterface $client,
-        BitcoinParserInterface $parser,
         PriceHistoryRepositoryInterface $repository,
     ) {
-        $result = $client->getTickers();
+        $result = $client->getCurrentPrice();
 
-        $dtos = $parser->parse($result);
-        $this->saveFetchedResult($dtos, $repository);
+        $this->saveFetchedResult($result, $repository);
 
-        event(new NewBitcoinPricesFetched($dtos));
+        event(new NewBitcoinPricesFetched($result));
     }
 
     private function saveFetchedResult(array $dtos, PriceHistoryRepositoryInterface $repository): void
@@ -65,7 +62,7 @@ class FetchCurrentBitcoinPrice extends Command
 
     private function saveInCache(PriceHistory $priceHistory): void
     {
-        $cacheKey = CacheKeyCreator::createLatestPriceHistoryByCurrency($priceHistory->currency);
+        $cacheKey = CacheKeyCreator::createLatestPriceByCurrencyKey($priceHistory->currency);
         Cache::set($cacheKey, $priceHistory, 15);
     }
 }

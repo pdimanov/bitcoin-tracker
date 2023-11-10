@@ -2,9 +2,11 @@
 
 namespace App\Service\Api;
 
-use Illuminate\Http\Client\Response;
+use Carbon\Carbon;
 
 interface BitcoinClientInterface
 {
-    public function getTickers(array $symbols = []): array;
+    public function getCurrentPrice(array $currencies = []): array;
+
+    public function getHistoryBetweenPeriod(array $currencies, Carbon $start, ?Carbon $end = null): array;
 }

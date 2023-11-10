@@ -20,7 +20,7 @@ class CachedPriceHistoryRepository implements PriceHistoryRepositoryInterface
 
     public function getLatestByCurrency(string $currency): PriceHistory|null
     {
-        $cacheKey = CacheKeyCreator::createLatestPriceHistoryByCurrency($currency);
+        $cacheKey = CacheKeyCreator::createLatestPriceByCurrencyKey($currency);
 
         return Cache::remember($cacheKey, 15, function () use ($currency) {
             return $this->priceHistoryRepository->getLatestByCurrency($currency);

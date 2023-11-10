@@ -27,7 +27,7 @@ class BitfinexParserTest extends TestCase
         $this->setupMocks();
         $data = [];
 
-        $result = $this->parser->parse($data);
+        $result = $this->parser->parsePrice($data);
 
         $this->assertEmpty($result);
     }
@@ -43,7 +43,7 @@ class BitfinexParserTest extends TestCase
             ]
         ];
 
-        $result = $this->parser->parse($data);
+        $result = $this->parser->parsePrice($data);
 
         $expected = [
             new BitcoinDto(123, Currency::US_DOLLARS->value),
@@ -68,7 +68,7 @@ class BitfinexParserTest extends TestCase
             ]
         ];
 
-        $result = $this->parser->parse($data);
+        $result = $this->parser->parsePrice($data);
 
         $expected = [
             new BitcoinDto(123, Currency::US_DOLLARS->value),
@@ -94,7 +94,7 @@ class BitfinexParserTest extends TestCase
             ]
         ];
 
-        $result = $this->parser->parse($data);
+        $result = $this->parser->parsePrice($data);
 
         $expected = [
             new BitcoinDto(234, Currency::EURO->value),
@@ -119,7 +119,7 @@ class BitfinexParserTest extends TestCase
             ]
         ];
 
-        $result = $this->parser->parse($data);
+        $result = $this->parser->parsePrice($data);
 
         $expected = [
             new BitcoinDto(234, Currency::EURO->value),
@@ -142,7 +142,7 @@ class BitfinexParserTest extends TestCase
             ]
         ];
 
-        $result = $this->parser->parse($data);
+        $result = $this->parser->parsePrice($data);
 
         $expected = [
             new BitcoinDto(234, Currency::EURO->value),

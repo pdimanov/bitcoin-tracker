@@ -5,6 +5,7 @@ namespace App\Service\Api\Parser;
 use App\DTO\BitcoinDto;
 use App\Enum\Currency;
 use App\Service\Api\BitfinexClient;
+use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
 
 class BitfinexParser implements BitcoinParserInterface
@@ -14,17 +15,37 @@ class BitfinexParser implements BitcoinParserInterface
     ) {
     }
 
-    public function parse(array $data): array
+    public function parsePrice(array $data): array
     {
         $parsedData = [];
         foreach ($data as $currencyData) {
             try {
-                $dto = new BitcoinDto(
+                $dto          = new BitcoinDto(
                     $this->validatePrice($currencyData[1] ?? null),
                     $this->parseCurrency($currencyData[0])
                 );
-
                 $parsedData[] = $dto;
+            } catch (\Exception $exception) {
+                $this->logger->error($exception->getMessage());
+                continue;
+            }
+        }
+
+        return $parsedData;
+    }
+
+    public function parseHistoryPriceData(array $data): array
+    {
+        $parsedData = [];
+        foreach ($data as $currencyData) {
+            try {
+                $currency                = $this->parseCurrency($currencyData[0]);
+                $dto                     = new BitcoinDto(
+                    $this->validatePrice($currencyData[1] ?? null),
+                    $currency,
+                    $this->parseDateTime($currencyData[12])
+                );
+                $parsedData[$currency][] = $dto;
             } catch (\Exception $exception) {
                 $this->logger->error($exception->getMessage());
                 continue;
@@ -60,5 +81,10 @@ class BitfinexParser implements BitcoinParserInterface
         }
 
         return $currency;
+    }
+
+    private function parseDateTime(int $timestampInMiliseconds): Carbon
+    {
+        return Carbon::createFromTimestampMs($timestampInMiliseconds);
     }
 }
