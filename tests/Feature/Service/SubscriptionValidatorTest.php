@@ -16,7 +16,7 @@ class SubscriptionValidatorTest extends TestCase
 {
     private SubscriptionValidator $validator;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

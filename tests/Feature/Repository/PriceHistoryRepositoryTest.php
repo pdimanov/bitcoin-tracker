@@ -11,7 +11,7 @@ class PriceHistoryRepositoryTest extends TestCase
 {
     private PriceHistoryRepository $repository;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
