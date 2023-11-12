@@ -1,7 +1,7 @@
 <template>
     <Head title="Home"/>
     <GuestLayout>
-        <ChartContainer :selectedCurrency="currencies[0]"/>
+        <ChartContainer :currencies="currencies"/>
         <SubscriptionForm :currencies="currencies" :intervals="intervals"/>
     </GuestLayout>
 </template>
