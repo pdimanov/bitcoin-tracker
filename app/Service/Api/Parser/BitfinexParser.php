@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 class BitfinexParser implements BitcoinParserInterface
 {
     public function __construct(
-        private LoggerInterface $logger
+        private readonly LoggerInterface $logger
     ) {
     }
 
@@ -22,7 +22,7 @@ class BitfinexParser implements BitcoinParserInterface
             try {
                 $dto          = new BitcoinDto(
                     $this->validatePrice($currencyData[1] ?? null),
-                    $this->parseCurrency($currencyData[0])
+                    $this->parseCurrency($currencyData[0]),
                 );
                 $parsedData[] = $dto;
             } catch (\Exception $exception) {
@@ -38,18 +38,12 @@ class BitfinexParser implements BitcoinParserInterface
     {
         $parsedData = [];
         foreach ($data as $currencyData) {
-            try {
-                $currency                = $this->parseCurrency($currencyData[0]);
-                $dto                     = new BitcoinDto(
-                    $this->validatePrice($currencyData[1] ?? null),
-                    $currency,
-                    $this->parseDateTime($currencyData[12])
-                );
-                $parsedData[$currency][] = $dto;
-            } catch (\Exception $exception) {
-                $this->logger->error($exception->getMessage());
-                continue;
+            $datetime = $this->parseDateTime($currencyData[12]);
+            if (!isset($parsedData['periods']) || !in_array($datetime, $parsedData['periods'])) {
+                $parsedData['periods'][] = $datetime;
             }
+            $currency                = $this->parseCurrency($currencyData[0]);
+            $parsedData[$currency][] = $this->validatePrice($currencyData[1] ?? null);
         }
 
         return $parsedData;
@@ -83,8 +77,8 @@ class BitfinexParser implements BitcoinParserInterface
         return $currency;
     }
 
-    private function parseDateTime(int $timestampInMiliseconds): Carbon
+    private function parseDateTime(int $timestampInMiliseconds): string
     {
-        return Carbon::createFromTimestampMs($timestampInMiliseconds);
+        return Carbon::createFromTimestampMs($timestampInMiliseconds)->format('Y-m-d H:i:s');
     }
 }

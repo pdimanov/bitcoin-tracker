@@ -9,6 +9,15 @@ use Illuminate\Validation\Rule;
 
 class StoreSubscriptionRequest extends FormRequest
 {
+    public function prepareForValidation()
+    {
+        if (!empty($this->input('currency'))) {
+            $this->merge([
+                'currency' => strtoupper($this->input('currency'))
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
